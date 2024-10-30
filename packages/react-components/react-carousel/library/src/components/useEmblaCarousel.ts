@@ -139,6 +139,19 @@ export function useEmblaCarousel(
       });
       setActiveIndex(newIndex);
     };
+
+    const handleSlideChange = () => {
+      // Controlled index may add a slide while setting the index to that new slide.
+      // This will handle the index update to ensure the controlled activeIndex is respected
+      // NOTE: We do not handle removal of controlled indexes or index change callbacks
+      const numSlides = emblaApi.current?.slideNodes().length ?? 0;
+      const currentIndex = emblaApi.current?.selectedScrollSnap() ?? 0;
+      // Handle slides added with controlled index
+      if (activeIndex > currentIndex && activeIndex <= numSlides) {
+        emblaApi.current?.scrollTo(activeIndex);
+      }
+    };
+
     const handleReinit = () => {
       const nodes: HTMLElement[] = emblaApi.current?.slideNodes() ?? [];
       const groupIndexList: number[][] = emblaApi.current?.internalEngine().slideRegistry ?? [];
@@ -177,6 +190,7 @@ export function useEmblaCarousel(
           emblaApi.current?.off('slidesInView', handleVisibilityChange);
           emblaApi.current?.off('select', handleIndexChange);
           emblaApi.current?.off('reInit', handleReinit);
+          emblaApi.current?.off('slidesChanged', handleSlideChange);
           emblaApi.current?.destroy();
         }
 
@@ -196,10 +210,11 @@ export function useEmblaCarousel(
           emblaApi.current?.on('reInit', handleReinit);
           emblaApi.current?.on('slidesInView', handleVisibilityChange);
           emblaApi.current?.on('select', handleIndexChange);
+          emblaApi.current?.on('slidesChanged', handleSlideChange);
         }
       },
     };
-  }, [getPlugins, setActiveIndex]);
+  }, [getPlugins, setActiveIndex, activeIndex]);
 
   const carouselApi = React.useMemo(
     () => ({
