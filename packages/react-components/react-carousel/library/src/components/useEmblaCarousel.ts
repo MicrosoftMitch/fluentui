@@ -52,6 +52,9 @@ export function useEmblaCarousel(
     initialState: 0,
   });
 
+  const indexRef = React.useRef<number>(activeIndex);
+  indexRef.current = activeIndex;
+
   const onDragEvent = useEventCallback((event: PointerEvent | MouseEvent, index: number) => {
     onDragIndexChange?.(event, { event, type: 'drag', index });
   });
@@ -132,6 +135,7 @@ export function useEmblaCarousel(
       const newIndex = emblaApi.current?.selectedScrollSnap() ?? 0;
       const slides = emblaApi.current?.slideNodes();
       const actualIndex = emblaApi.current?.internalEngine().slideRegistry[newIndex][0] ?? 0;
+      indexRef.current = newIndex;
 
       // We set the active or first index of group on-screen as the selected tabster index
       slides?.forEach((slide, slideIndex) => {
@@ -147,8 +151,8 @@ export function useEmblaCarousel(
       const numSlides = emblaApi.current?.slideNodes().length ?? 0;
       const currentIndex = emblaApi.current?.selectedScrollSnap() ?? 0;
       // Handle slides added with controlled index
-      if (activeIndex > currentIndex && activeIndex <= numSlides) {
-        emblaApi.current?.scrollTo(activeIndex);
+      if (indexRef.current > currentIndex && indexRef.current <= numSlides) {
+        emblaApi.current?.scrollTo(indexRef.current);
       }
     };
 
@@ -214,7 +218,7 @@ export function useEmblaCarousel(
         }
       },
     };
-  }, [getPlugins, setActiveIndex, activeIndex]);
+  }, [getPlugins, setActiveIndex]);
 
   const carouselApi = React.useMemo(
     () => ({
