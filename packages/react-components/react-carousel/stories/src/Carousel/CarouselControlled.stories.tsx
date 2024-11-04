@@ -8,6 +8,7 @@ import {
   Tooltip,
   Toolbar,
   ToolbarButton,
+  Button,
   CarouselSlider,
 } from '@fluentui/react-components';
 import {
@@ -121,8 +122,43 @@ export const Controlled = () => {
   const [activeIndex, setActiveIndex] = React.useState(1);
   const classes = useClasses();
 
+  const [numCards, setNumCards] = React.useState(25);
+
+  let cardsArray = [];
+  for (let i = 0; i < numCards; i++) {
+    cardsArray.push(
+      <CarouselCard key={`card ${i}`} aria-label={`${i} of ${numCards}`}>
+        <WireframeContent index={i} />
+      </CarouselCard>,
+    );
+  }
+
+  console.log('Cards:', cardsArray);
+
+  // React.useEffect(() => {
+  //   setActiveIndex(numCards - 1);
+  // }, [numCards]);
+
   return (
     <div className={classes.container}>
+      <Button
+        onClick={() => {
+          const currentNumCards = numCards;
+          setNumCards(currentNumCards + 1);
+          // Set to new card to test
+          setActiveIndex(currentNumCards);
+        }}
+      >
+        {'Add card'}
+      </Button>
+      <Button
+        onClick={() => {
+          setActiveIndex(numCards - 1);
+          setNumCards(Math.max(numCards - 1, 0));
+        }}
+      >
+        {'Remove card'}
+      </Button>
       <Carousel
         activeIndex={activeIndex}
         className={classes.carousel}
@@ -135,23 +171,7 @@ export const Controlled = () => {
         </Tooltip>
 
         <CarouselViewport className={classes.viewport}>
-          <CarouselSlider>
-            <CarouselCard aria-label="1 of 5">
-              <WireframeContent index={0} />
-            </CarouselCard>
-            <CarouselCard aria-label="2 of 5">
-              <WireframeContent index={1} />
-            </CarouselCard>
-            <CarouselCard aria-label="3 of 5">
-              <WireframeContent index={2} />
-            </CarouselCard>
-            <CarouselCard aria-label="4 of 5">
-              <WireframeContent index={3} />
-            </CarouselCard>
-            <CarouselCard aria-label="5 of 5">
-              <WireframeContent index={4} />
-            </CarouselCard>
-          </CarouselSlider>
+          <CarouselSlider>{cardsArray}</CarouselSlider>
         </CarouselViewport>
 
         <Tooltip content="Go To Next Page" relationship="label">
@@ -163,7 +183,7 @@ export const Controlled = () => {
         <code className={classes.code}>{JSON.stringify({ activeIndex }, null, 2)}</code>
         <Divider vertical />
         <Toolbar className={classes.controls}>
-          {new Array(5).fill(null).map((_, index) => (
+          {new Array(numCards).fill(null).map((_, index) => (
             <ToolbarButton
               key={`toolbar-button-${index}`}
               aria-label={`Carousel Nav Button ${index} `}
