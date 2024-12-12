@@ -10,6 +10,7 @@ export interface TokenReference {
 export interface StyleContent {
   tokens: TokenReference[];
   nested?: StyleAnalysis;
+  isClassFunction?: boolean;
 }
 
 export interface StyleAnalysis {

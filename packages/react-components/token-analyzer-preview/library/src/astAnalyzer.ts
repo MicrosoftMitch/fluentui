@@ -159,6 +159,37 @@ function createStyleContent(tokens: TokenReference[]): StyleContent {
 }
 
 /**
+ * Similar to createStyleContent but for makeResetStyles
+ */
+function createResetStyleContent(tokens: TokenReference[]): StyleContent {
+  const content: StyleContent = {
+    tokens: [],
+    isClassFunction: true,
+  };
+
+  // Nested structures have paths longer than 1
+  const nestedTokens = tokens.filter(t => t.path.length > 1);
+  if (nestedTokens.length > 0) {
+    content.nested = nestedTokens.reduce<StyleAnalysis>((acc, token) => {
+      const nestedKey = token.path[0];
+
+      if (!acc[nestedKey]) {
+        acc[nestedKey] = { tokens: [] };
+      }
+
+      acc[nestedKey].tokens.push({
+        ...token,
+        path: [], // Reset path as we've used it for nesting
+      });
+
+      return acc;
+    }, {});
+  }
+
+  return content;
+}
+
+/**
  * Creates metadata from style mappings
  */
 function createMetadata(styleMappings: StyleMapping[]): StyleMetadata {
@@ -213,6 +244,38 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
             }
           }
         });
+      }
+    } else if (Node.isCallExpression(node) && node.getExpression().getText() === 'makeResetStyles') {
+      // Similar to above, but the styles are stored under the assigned function name instead of local variable
+      // We store 'isClassFunction' to differentiate from makeStyles and link during mergeClasses
+      const stylesArg = node.getArguments()[0];
+      const parentNode = node.getParent();
+      if (Node.isVariableDeclaration(parentNode)) {
+        const styleName = parentNode.getName();
+        analysis[styleName] = { tokens: [], nested: {} };
+        console.log('Test - 1');
+        if (Node.isObjectLiteralExpression(stylesArg)) {
+          console.log('Test - 2');
+          // Process the styles object
+          stylesArg.getProperties().forEach(prop => {
+            console.log('Test - 3: ', prop.getKindName());
+            if (Node.isPropertyAssignment(prop)) {
+              const tokens = processStyleProperty(prop);
+              console.log('Test - 4: ', tokens);
+              if (tokens.length) {
+                const styleContent = createResetStyleContent(tokens);
+                console.log('styleContent - 5: ', styleContent);
+                console.log('tokens - 5: ', tokens);
+                analysis[styleName].tokens.concat(styleContent.tokens);
+                analysis[styleName].nested = {
+                  ...analysis[styleName].nested,
+                  ...styleContent.nested,
+                };
+                console.log('Test - 6: ', analysis[styleName]);
+              }
+            }
+          });
+        }
       }
     }
   });
