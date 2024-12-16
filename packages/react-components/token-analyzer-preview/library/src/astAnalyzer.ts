@@ -68,60 +68,6 @@ function processStyleProperty(prop: PropertyAssignment): TokenReference[] {
 
   return tokens;
 }
-
-/**
- * Process a style property to extract token references.
- * Property names are derived from the actual CSS property in the path,
- * not the object key containing them.
- */
-function processResetStyleProperty(prop: PropertyAssignment): TokenReference[] {
-  const tokens: TokenReference[] = [];
-  const parentName = prop.getName();
-
-  function processNode(node?: Node, path: string[] = []): void {
-    if (!node) {
-      return;
-    }
-
-    if (Node.isStringLiteral(node) || Node.isIdentifier(node)) {
-      const text = node.getText();
-      const matches = text.match(TOKEN_REGEX);
-      if (matches) {
-        matches.forEach(match => {
-          tokens.push({
-            property: path[path.length - 1] || parentName,
-            token: match,
-            path,
-          });
-        });
-      }
-    } else if (Node.isPropertyAccessExpression(node)) {
-      const text = node.getText();
-      if (text.startsWith('tokens.')) {
-        tokens.push({
-          property: path[path.length - 1] || parentName,
-          token: text,
-          path,
-        });
-      }
-    } else if (Node.isObjectLiteralExpression(node)) {
-      node.getProperties().forEach(childProp => {
-        if (Node.isPropertyAssignment(childProp)) {
-          const childName = childProp.getName();
-          processNode(childProp.getInitializer(), [...path, childName]);
-        }
-      });
-    }
-  }
-
-  const initializer = prop.getInitializer();
-  if (initializer) {
-    processNode(initializer);
-  }
-
-  return tokens;
-}
-
 /**
  * Analyzes mergeClasses calls to determine style relationships
  */
@@ -281,7 +227,7 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
           // Process the styles object
           stylesArg.getProperties().forEach(prop => {
             if (Node.isPropertyAssignment(prop)) {
-              const tokens = processResetStyleProperty(prop);
+              const tokens = processStyleProperty(prop);
               if (tokens.length) {
                 const styleContent = createStyleContent(tokens, true);
                 analysis[styleName].tokens = analysis[styleName].tokens.concat(styleContent.tokens);
