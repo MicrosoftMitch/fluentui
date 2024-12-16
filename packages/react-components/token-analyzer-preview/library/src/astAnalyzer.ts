@@ -70,6 +70,59 @@ function processStyleProperty(prop: PropertyAssignment): TokenReference[] {
 }
 
 /**
+ * Process a style property to extract token references.
+ * Property names are derived from the actual CSS property in the path,
+ * not the object key containing them.
+ */
+function processResetStyleProperty(prop: PropertyAssignment): TokenReference[] {
+  const tokens: TokenReference[] = [];
+  const parentName = prop.getName();
+
+  function processNode(node?: Node, path: string[] = []): void {
+    if (!node) {
+      return;
+    }
+
+    if (Node.isStringLiteral(node) || Node.isIdentifier(node)) {
+      const text = node.getText();
+      const matches = text.match(TOKEN_REGEX);
+      if (matches) {
+        matches.forEach(match => {
+          tokens.push({
+            property: path[path.length - 1] || parentName,
+            token: match,
+            path,
+          });
+        });
+      }
+    } else if (Node.isPropertyAccessExpression(node)) {
+      const text = node.getText();
+      if (text.startsWith('tokens.')) {
+        tokens.push({
+          property: path[path.length - 1] || parentName,
+          token: text,
+          path,
+        });
+      }
+    } else if (Node.isObjectLiteralExpression(node)) {
+      node.getProperties().forEach(childProp => {
+        if (Node.isPropertyAssignment(childProp)) {
+          const childName = childProp.getName();
+          processNode(childProp.getInitializer(), [...path, childName]);
+        }
+      });
+    }
+  }
+
+  const initializer = prop.getInitializer();
+  if (initializer) {
+    processNode(initializer);
+  }
+
+  return tokens;
+}
+
+/**
  * Analyzes mergeClasses calls to determine style relationships
  */
 function analyzeMergeClasses(sourceFile: SourceFile): StyleMapping[] {
@@ -131,44 +184,15 @@ function analyzeMergeClasses(sourceFile: SourceFile): StyleMapping[] {
  * ```
  * Property names reflect the actual CSS property, derived from the path.
  */
-function createStyleContent(tokens: TokenReference[]): StyleContent {
+function createStyleContent(tokens: TokenReference[], isResetStyles?: Boolean): StyleContent {
+  // Reset styles have one less layer of nesting
+  const resetStyleMod = isResetStyles ? 1 : 0;
   const content: StyleContent = {
-    tokens: tokens.filter(t => t.path.length === 1),
+    tokens: tokens.filter(t => t.path.length === 1 - resetStyleMod),
   };
 
   // Nested structures have paths longer than 1
-  const nestedTokens = tokens.filter(t => t.path.length > 1);
-  if (nestedTokens.length > 0) {
-    content.nested = nestedTokens.reduce<StyleAnalysis>((acc, token) => {
-      const nestedKey = token.path[0];
-
-      if (!acc[nestedKey]) {
-        acc[nestedKey] = { tokens: [] };
-      }
-
-      acc[nestedKey].tokens.push({
-        ...token,
-        path: [], // Reset path as we've used it for nesting
-      });
-
-      return acc;
-    }, {});
-  }
-
-  return content;
-}
-
-/**
- * Similar to createStyleContent but for makeResetStyles
- */
-function createResetStyleContent(tokens: TokenReference[]): StyleContent {
-  const content: StyleContent = {
-    tokens: [],
-    isClassFunction: true,
-  };
-
-  // Nested structures have paths longer than 1
-  const nestedTokens = tokens.filter(t => t.path.length > 1);
+  const nestedTokens = tokens.filter(t => t.path.length > 1 - resetStyleMod);
   if (nestedTokens.length > 0) {
     content.nested = nestedTokens.reduce<StyleAnalysis>((acc, token) => {
       const nestedKey = token.path[0];
@@ -247,31 +271,24 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
       }
     } else if (Node.isCallExpression(node) && node.getExpression().getText() === 'makeResetStyles') {
       // Similar to above, but the styles are stored under the assigned function name instead of local variable
-      // We store 'isClassFunction' to differentiate from makeStyles and link during mergeClasses
       const stylesArg = node.getArguments()[0];
       const parentNode = node.getParent();
       if (Node.isVariableDeclaration(parentNode)) {
         const styleName = parentNode.getName();
-        analysis[styleName] = { tokens: [], nested: {} };
-        console.log('Test - 1');
+        // We store 'isClassFunction' to differentiate from makeStyles and link during mergeClasses
+        analysis[styleName] = { tokens: [], nested: {}, isClassFunction: true };
         if (Node.isObjectLiteralExpression(stylesArg)) {
-          console.log('Test - 2');
           // Process the styles object
           stylesArg.getProperties().forEach(prop => {
-            console.log('Test - 3: ', prop.getKindName());
             if (Node.isPropertyAssignment(prop)) {
-              const tokens = processStyleProperty(prop);
-              console.log('Test - 4: ', tokens);
+              const tokens = processResetStyleProperty(prop);
               if (tokens.length) {
-                const styleContent = createResetStyleContent(tokens);
-                console.log('styleContent - 5: ', styleContent);
-                console.log('tokens - 5: ', tokens);
-                analysis[styleName].tokens.concat(styleContent.tokens);
+                const styleContent = createStyleContent(tokens, true);
+                analysis[styleName].tokens = analysis[styleName].tokens.concat(styleContent.tokens);
                 analysis[styleName].nested = {
                   ...analysis[styleName].nested,
                   ...styleContent.nested,
                 };
-                console.log('Test - 6: ', analysis[styleName]);
               }
             }
           });
