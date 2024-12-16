@@ -21,13 +21,18 @@ interface StyleMapping {
  * Property names are derived from the actual CSS property in the path,
  * not the object key containing them.
  */
-function processStyleProperty(prop: PropertyAssignment): TokenReference[] {
+function processStyleProperty(prop: PropertyAssignment, isResetStyles?: Boolean): TokenReference[] {
   const tokens: TokenReference[] = [];
   const parentName = prop.getName();
 
   function processNode(node?: Node, path: string[] = []): void {
     if (!node) {
       return;
+    }
+
+    // If we're processing a reset style, we need to add the parent name to the path
+    if (isResetStyles && path.length === 0) {
+      path.push(parentName);
     }
 
     if (Node.isStringLiteral(node) || Node.isIdentifier(node)) {
@@ -130,15 +135,13 @@ function analyzeMergeClasses(sourceFile: SourceFile): StyleMapping[] {
  * ```
  * Property names reflect the actual CSS property, derived from the path.
  */
-function createStyleContent(tokens: TokenReference[], isResetStyles?: Boolean): StyleContent {
-  // Reset styles have one less layer of nesting
-  const resetStyleMod = isResetStyles ? 1 : 0;
+function createStyleContent(tokens: TokenReference[]): StyleContent {
   const content: StyleContent = {
-    tokens: tokens.filter(t => t.path.length === 1 - resetStyleMod),
+    tokens: tokens.filter(t => t.path.length === 1),
   };
 
   // Nested structures have paths longer than 1
-  const nestedTokens = tokens.filter(t => t.path.length > 1 - resetStyleMod);
+  const nestedTokens = tokens.filter(t => t.path.length > 1);
   if (nestedTokens.length > 0) {
     content.nested = nestedTokens.reduce<StyleAnalysis>((acc, token) => {
       const nestedKey = token.path[0];
@@ -202,7 +205,6 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
   sourceFile.forEachDescendant(node => {
     if (Node.isCallExpression(node) && node.getExpression().getText() === 'makeStyles') {
       const stylesArg = node.getArguments()[0];
-
       if (Node.isObjectLiteralExpression(stylesArg)) {
         // Process the styles object
         stylesArg.getProperties().forEach(prop => {
@@ -227,9 +229,9 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
           // Process the styles object
           stylesArg.getProperties().forEach(prop => {
             if (Node.isPropertyAssignment(prop)) {
-              const tokens = processStyleProperty(prop);
+              const tokens = processStyleProperty(prop, true);
               if (tokens.length) {
-                const styleContent = createStyleContent(tokens, true);
+                const styleContent = createStyleContent(tokens);
                 analysis[styleName].tokens = analysis[styleName].tokens.concat(styleContent.tokens);
                 analysis[styleName].nested = {
                   ...analysis[styleName].nested,
