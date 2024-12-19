@@ -11,6 +11,7 @@ export interface StyleContent {
   tokens: TokenReference[];
   nested?: StyleAnalysis;
   isClassFunction?: boolean;
+  assignedVariables?: string[];
 }
 
 export interface StyleAnalysis {

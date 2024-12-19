@@ -16,6 +16,11 @@ interface StyleMapping {
   conditionalStyles: StyleCondition[];
 }
 
+interface VariableMapping {
+  variableName: string;
+  functionName: string;
+}
+
 /**
  * Process a style property to extract token references.
  * Property names are derived from the actual CSS property in the path,
@@ -106,6 +111,9 @@ function analyzeMergeClasses(sourceFile: SourceFile): StyleMapping[] {
               condition: arg.getLeft().getText(),
             });
           }
+        } else if (!arg.getText().includes('.')) {
+          // We found a single variable (makeResetStyles or other assignment), add to base styles for lookup later
+          mapping.baseStyles.push(arg.getText());
         }
       });
 
@@ -224,7 +232,7 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
       if (Node.isVariableDeclaration(parentNode)) {
         const styleName = parentNode.getName();
         // We store 'isClassFunction' to differentiate from makeStyles and link during mergeClasses
-        analysis[styleName] = { tokens: [], nested: {}, isClassFunction: true };
+        analysis[styleName] = { tokens: [], nested: {}, assignedVariables: [], isClassFunction: true };
         if (Node.isObjectLiteralExpression(stylesArg)) {
           // Process the styles object
           stylesArg.getProperties().forEach(prop => {
@@ -243,6 +251,34 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
         }
       }
     }
+  });
+
+  const variables: VariableMapping[] = [];
+  const resetStyleFunctionNames: string[] = Object.keys(analysis).filter(
+    (styleName: string) => analysis[styleName].isClassFunction,
+  );
+
+  sourceFile.forEachDescendant(node => {
+    // We do a first parse to get all known variables (i.e. makeResetStyles).
+    // This is necessary to handle cases where we're using a variable directly in mergeClasses.
+
+    if (Node.isCallExpression(node) && resetStyleFunctionNames.includes(node.getExpression().getText())) {
+      const parentNode = node.getParent();
+      const functionName = node.getExpression().getText();
+      if (Node.isVariableDeclaration(parentNode)) {
+        const variableName = parentNode.getName();
+        const variableMap: VariableMapping = {
+          functionName,
+          variableName,
+        };
+        variables.push(variableMap);
+      }
+    }
+  });
+
+  // Store our makeResetStyles assigned variables in the analysis to link later
+  variables.forEach(variable => {
+    analysis[variable.functionName].assignedVariables?.push(variable.variableName);
   });
 
   return analysis;
