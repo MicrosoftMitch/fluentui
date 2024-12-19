@@ -231,7 +231,7 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
       const parentNode = node.getParent();
       if (Node.isVariableDeclaration(parentNode)) {
         const styleName = parentNode.getName();
-        // We store 'isClassFunction' to differentiate from makeStyles and link during mergeClasses
+        // We store 'isClassFunction' to differentiate from makeStyles and link mergeClasses variables
         analysis[styleName] = { tokens: [], nested: {}, assignedVariables: [], isClassFunction: true };
         if (Node.isObjectLiteralExpression(stylesArg)) {
           // Process the styles object
@@ -259,8 +259,8 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
   );
 
   sourceFile.forEachDescendant(node => {
-    // We do a first parse to get all known variables (i.e. makeResetStyles).
-    // This is necessary to handle cases where we're using a variable directly in mergeClasses.
+    // We do a second parse to link known style functions (i.e. makeResetStyles  assigned function variable names).
+    // This is necessary to handle cases where we're using a variable directly in mergeClasses to link styles.
 
     if (Node.isCallExpression(node) && resetStyleFunctionNames.includes(node.getExpression().getText())) {
       const parentNode = node.getParent();
