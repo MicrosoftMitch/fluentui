@@ -338,7 +338,8 @@
     "metadata": {
       "styleConditions": {
         "rootBaseClassName": {
-          "isBase": true
+          "isBase": true,
+          "assignedSlots": ["root"]
         },
         "rootStyles[size]": {
           "isBase": true
