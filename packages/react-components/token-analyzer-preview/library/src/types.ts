@@ -9,13 +9,18 @@ export interface TokenReference {
 
 export interface StyleContent {
   tokens: TokenReference[];
-  nested?: StyleAnalysis;
-  isClassFunction?: boolean;
+  nested?: StyleTokens;
+  isResetStyles?: boolean;
   assignedVariables?: string[];
+  assignedSlots?: string[];
+}
+
+export interface StyleTokens {
+  [key: string]: StyleContent;
 }
 
 export interface StyleAnalysis {
-  [key: string]: StyleContent;
+  [key: string]: StyleTokens;
 }
 
 export interface StyleCondition {

@@ -8,8 +8,11 @@ import {
   StyleContent,
   StyleMetadata,
   TOKEN_REGEX,
+  StyleTokens,
 } from './types.js';
 import { log, measure, measureAsync } from './debugUtils.js';
+
+const makeResetStylesToken = 'resetStyles';
 
 interface StyleMapping {
   baseStyles: string[];
@@ -151,7 +154,7 @@ function createStyleContent(tokens: TokenReference[]): StyleContent {
   // Nested structures have paths longer than 1
   const nestedTokens = tokens.filter(t => t.path.length > 1);
   if (nestedTokens.length > 0) {
-    content.nested = nestedTokens.reduce<StyleAnalysis>((acc, token) => {
+    content.nested = nestedTokens.reduce<StyleTokens>((acc, token) => {
       const nestedKey = token.path[0];
 
       if (!acc[nestedKey]) {
@@ -178,8 +181,12 @@ function createMetadata(styleMappings: StyleMapping[]): StyleMetadata {
     styleConditions: {},
   };
 
+  console.log('Got style mappings:', styleMappings);
+
   styleMappings.forEach(mapping => {
     mapping.baseStyles.forEach(style => {
+      console.log('Got style mappings:', metadata.styleConditions);
+      console.log('Got style mappings:', metadata.styleConditions[style]);
       if (metadata.styleConditions[style]) {
         metadata.styleConditions[style].isBase = true;
       } else {
@@ -213,14 +220,19 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
   sourceFile.forEachDescendant(node => {
     if (Node.isCallExpression(node) && node.getExpression().getText() === 'makeStyles') {
       const stylesArg = node.getArguments()[0];
-      if (Node.isObjectLiteralExpression(stylesArg)) {
+      const parentNode = node.getParent();
+      if (Node.isObjectLiteralExpression(stylesArg) && Node.isVariableDeclaration(parentNode)) {
         // Process the styles object
         stylesArg.getProperties().forEach(prop => {
           if (Node.isPropertyAssignment(prop)) {
             const styleName = prop.getName();
             const tokens = processStyleProperty(prop);
+            const functionName = parentNode.getName();
+            if (!analysis[functionName]) {
+              analysis[functionName] = {};
+            }
             if (tokens.length) {
-              analysis[styleName] = createStyleContent(tokens);
+              analysis[functionName][styleName] = createStyleContent(tokens);
             }
           }
         });
@@ -230,9 +242,18 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
       const stylesArg = node.getArguments()[0];
       const parentNode = node.getParent();
       if (Node.isVariableDeclaration(parentNode)) {
-        const styleName = parentNode.getName();
-        // We store 'isClassFunction' to differentiate from makeStyles and link mergeClasses variables
-        analysis[styleName] = { tokens: [], nested: {}, assignedVariables: [], isClassFunction: true };
+        const functionName = parentNode.getName();
+        if (!analysis[functionName]) {
+          analysis[functionName] = {};
+        }
+        // We store 'isResetStyles' to differentiate from makeStyles and link mergeClasses variables
+        analysis[functionName][makeResetStylesToken] = {
+          tokens: [],
+          nested: {},
+          assignedVariables: [],
+          assignedSlots: [],
+          isResetStyles: true,
+        };
         if (Node.isObjectLiteralExpression(stylesArg)) {
           // Process the styles object
           stylesArg.getProperties().forEach(prop => {
@@ -240,9 +261,11 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
               const tokens = processStyleProperty(prop, true);
               if (tokens.length) {
                 const styleContent = createStyleContent(tokens);
-                analysis[styleName].tokens = analysis[styleName].tokens.concat(styleContent.tokens);
-                analysis[styleName].nested = {
-                  ...analysis[styleName].nested,
+                analysis[functionName][makeResetStylesToken].tokens = analysis[functionName][
+                  makeResetStylesToken
+                ].tokens.concat(styleContent.tokens);
+                analysis[functionName][makeResetStylesToken].nested = {
+                  ...analysis[functionName][makeResetStylesToken].nested,
                   ...styleContent.nested,
                 };
               }
@@ -255,7 +278,7 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
 
   const variables: VariableMapping[] = [];
   const resetStyleFunctionNames: string[] = Object.keys(analysis).filter(
-    (styleName: string) => analysis[styleName].isClassFunction,
+    (styleName: string) => analysis[styleName].isResetStyles,
   );
 
   sourceFile.forEachDescendant(node => {
@@ -278,7 +301,7 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
 
   // Store our makeResetStyles assigned variables in the analysis to link later
   variables.forEach(variable => {
-    analysis[variable.functionName].assignedVariables?.push(variable.variableName);
+    analysis[variable.functionName][makeResetStylesToken].assignedVariables?.push(variable.variableName);
   });
 
   return analysis;
