@@ -181,12 +181,8 @@ function createMetadata(styleMappings: StyleMapping[]): StyleMetadata {
     styleConditions: {},
   };
 
-  console.log('Got style mappings:', styleMappings);
-
   styleMappings.forEach(mapping => {
     mapping.baseStyles.forEach(style => {
-      console.log('Got style mappings:', metadata.styleConditions);
-      console.log('Got style mappings:', metadata.styleConditions[style]);
       if (metadata.styleConditions[style]) {
         metadata.styleConditions[style].isBase = true;
       } else {
@@ -250,7 +246,6 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
         analysis[functionName][makeResetStylesToken] = {
           tokens: [],
           nested: {},
-          assignedVariables: [],
           assignedSlots: [],
           isResetStyles: true,
         };
@@ -277,15 +272,13 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
   });
 
   const variables: VariableMapping[] = [];
-  const resetStyleFunctionNames: string[] = Object.keys(analysis).filter(
-    (styleName: string) => analysis[styleName].isResetStyles,
-  );
+  const styleFunctionNames: string[] = Object.keys(analysis);
 
   sourceFile.forEachDescendant(node => {
     // We do a second parse to link known style functions (i.e. makeResetStyles  assigned function variable names).
     // This is necessary to handle cases where we're using a variable directly in mergeClasses to link styles.
 
-    if (Node.isCallExpression(node) && resetStyleFunctionNames.includes(node.getExpression().getText())) {
+    if (Node.isCallExpression(node) && styleFunctionNames.includes(node.getExpression().getText())) {
       const parentNode = node.getParent();
       const functionName = node.getExpression().getText();
       if (Node.isVariableDeclaration(parentNode)) {
@@ -301,7 +294,12 @@ async function analyzeMakeStyles(sourceFile: SourceFile): Promise<StyleAnalysis>
 
   // Store our makeResetStyles assigned variables in the analysis to link later
   variables.forEach(variable => {
-    analysis[variable.functionName][makeResetStylesToken].assignedVariables?.push(variable.variableName);
+    Object.keys(analysis[variable.functionName]).forEach(styleName => {
+      if (analysis[variable.functionName][styleName].assignedVariables === undefined) {
+        analysis[variable.functionName][styleName].assignedVariables = [];
+      }
+      analysis[variable.functionName][styleName].assignedVariables?.push(variable.variableName);
+    });
   });
 
   return analysis;

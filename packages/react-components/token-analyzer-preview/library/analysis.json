@@ -1,149 +1,4 @@
 {
-  "library/src/components/MenuButton/useMenuButtonStyles.styles.ts": {
-    "styles": {
-      "useRootExpandedStyles": {
-        "outline": {
-          "tokens": [
-            {
-              "property": "color",
-              "token": "tokens.colorNeutralForeground1Selected",
-              "path": ["color"]
-            }
-          ]
-        },
-        "primary": {
-          "tokens": [
-            {
-              "property": "backgroundColor",
-              "token": "tokens.colorBrandBackgroundSelected",
-              "path": ["backgroundColor"]
-            }
-          ]
-        },
-        "secondary": {
-          "tokens": [
-            {
-              "property": "backgroundColor",
-              "token": "tokens.colorNeutralBackground1Selected",
-              "path": ["backgroundColor"]
-            },
-            {
-              "property": "color",
-              "token": "tokens.colorNeutralForeground1Selected",
-              "path": ["color"]
-            }
-          ]
-        },
-        "subtle": {
-          "tokens": [
-            {
-              "property": "backgroundColor",
-              "token": "tokens.colorSubtleBackgroundSelected",
-              "path": ["backgroundColor"]
-            },
-            {
-              "property": "color",
-              "token": "tokens.colorNeutralForeground2Selected",
-              "path": ["color"]
-            }
-          ]
-        },
-        "transparent": {
-          "tokens": [
-            {
-              "property": "backgroundColor",
-              "token": "tokens.colorTransparentBackgroundSelected",
-              "path": ["backgroundColor"]
-            },
-            {
-              "property": "color",
-              "token": "tokens.colorNeutralForeground2BrandSelected",
-              "path": ["color"]
-            }
-          ]
-        }
-      },
-      "useIconExpandedStyles": {
-        "outline": {
-          "tokens": [
-            {
-              "property": "color",
-              "token": "tokens.colorNeutralForeground1Selected",
-              "path": ["color"]
-            }
-          ]
-        },
-        "secondary": {
-          "tokens": [
-            {
-              "property": "color",
-              "token": "tokens.colorNeutralForeground1Selected",
-              "path": ["color"]
-            }
-          ]
-        },
-        "subtle": {
-          "tokens": [
-            {
-              "property": "color",
-              "token": "tokens.colorNeutralForeground2BrandSelected",
-              "path": ["color"]
-            }
-          ]
-        },
-        "transparent": {
-          "tokens": [
-            {
-              "property": "color",
-              "token": "tokens.colorNeutralForeground2BrandSelected",
-              "path": ["color"]
-            }
-          ]
-        }
-      },
-      "useMenuIconStyles": {
-        "small": {
-          "tokens": [
-            {
-              "property": "lineHeight",
-              "token": "tokens.lineHeightBase200",
-              "path": ["lineHeight"]
-            }
-          ]
-        },
-        "medium": {
-          "tokens": [
-            {
-              "property": "lineHeight",
-              "token": "tokens.lineHeightBase200",
-              "path": ["lineHeight"]
-            }
-          ]
-        },
-        "large": {
-          "tokens": [
-            {
-              "property": "lineHeight",
-              "token": "tokens.lineHeightBase400",
-              "path": ["lineHeight"]
-            }
-          ]
-        },
-        "notIconOnly": {
-          "tokens": [
-            {
-              "property": "marginLeft",
-              "token": "tokens.spacingHorizontalXS",
-              "path": ["marginLeft"]
-            }
-          ]
-        }
-      }
-    },
-    "metadata": {
-      "styleConditions": {}
-    }
-  },
   "library/src/components/CompoundButton/useCompoundButtonStyles.styles.ts": {
     "styles": {
       "useRootStyles": {
@@ -177,7 +32,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootStyles"]
         },
         "primary": {
           "tokens": [],
@@ -209,7 +65,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootStyles"]
         },
         "subtle": {
           "tokens": [],
@@ -241,7 +98,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootStyles"]
         },
         "transparent": {
           "tokens": [],
@@ -273,7 +131,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootStyles"]
         },
         "small": {
           "tokens": [
@@ -287,7 +146,8 @@
               "token": "tokens.lineHeightBase300",
               "path": ["lineHeight"]
             }
-          ]
+          ],
+          "assignedVariables": ["rootStyles"]
         },
         "medium": {
           "tokens": [
@@ -301,7 +161,8 @@
               "token": "tokens.lineHeightBase300",
               "path": ["lineHeight"]
             }
-          ]
+          ],
+          "assignedVariables": ["rootStyles"]
         },
         "large": {
           "tokens": [
@@ -315,7 +176,8 @@
               "token": "tokens.lineHeightBase400",
               "path": ["lineHeight"]
             }
-          ]
+          ],
+          "assignedVariables": ["rootStyles"]
         },
         "disabled": {
           "tokens": [],
@@ -347,7 +209,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootStyles"]
         }
       },
       "useRootIconOnlyStyles": {
@@ -358,7 +221,8 @@
               "token": "tokens.spacingHorizontalXS",
               "path": ["padding"]
             }
-          ]
+          ],
+          "assignedVariables": ["rootIconOnlyStyles"]
         },
         "medium": {
           "tokens": [
@@ -367,7 +231,8 @@
               "token": "tokens.spacingHorizontalSNudge",
               "path": ["padding"]
             }
-          ]
+          ],
+          "assignedVariables": ["rootIconOnlyStyles"]
         },
         "large": {
           "tokens": [
@@ -376,7 +241,8 @@
               "token": "tokens.spacingHorizontalS",
               "path": ["padding"]
             }
-          ]
+          ],
+          "assignedVariables": ["rootIconOnlyStyles"]
         }
       },
       "useIconStyles": {
@@ -387,7 +253,8 @@
               "token": "tokens.spacingHorizontalM",
               "path": ["marginRight"]
             }
-          ]
+          ],
+          "assignedVariables": ["iconStyles"]
         },
         "after": {
           "tokens": [
@@ -396,7 +263,8 @@
               "token": "tokens.spacingHorizontalM",
               "path": ["marginLeft"]
             }
-          ]
+          ],
+          "assignedVariables": ["iconStyles"]
         }
       },
       "useContentContainerStyles": {},
@@ -408,7 +276,8 @@
               "token": "tokens.fontWeightRegular",
               "path": ["fontWeight"]
             }
-          ]
+          ],
+          "assignedVariables": ["secondaryContentStyles"]
         },
         "small": {
           "tokens": [
@@ -417,7 +286,8 @@
               "token": "tokens.fontSizeBase200",
               "path": ["fontSize"]
             }
-          ]
+          ],
+          "assignedVariables": ["secondaryContentStyles"]
         },
         "medium": {
           "tokens": [
@@ -426,7 +296,8 @@
               "token": "tokens.fontSizeBase200",
               "path": ["fontSize"]
             }
-          ]
+          ],
+          "assignedVariables": ["secondaryContentStyles"]
         },
         "large": {
           "tokens": [
@@ -435,7 +306,8 @@
               "token": "tokens.fontSizeBase300",
               "path": ["fontSize"]
             }
-          ]
+          ],
+          "assignedVariables": ["secondaryContentStyles"]
         }
       }
     },
@@ -541,9 +413,9 @@
               ]
             }
           },
-          "assignedVariables": [],
           "assignedSlots": [],
-          "isResetStyles": true
+          "isResetStyles": true,
+          "assignedVariables": ["rootBaseClassName"]
         }
       },
       "useIconBaseClassName": {
@@ -556,9 +428,9 @@
             }
           ],
           "nested": {},
-          "assignedVariables": [],
           "assignedSlots": [],
-          "isResetStyles": true
+          "isResetStyles": true,
+          "assignedVariables": ["iconBaseClassName"]
         }
       },
       "useRootStyles": {
@@ -589,7 +461,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootStyles"]
         },
         "primary": {
           "tokens": [
@@ -633,7 +506,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootStyles"]
         },
         "subtle": {
           "tokens": [
@@ -687,7 +561,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootStyles"]
         },
         "transparent": {
           "tokens": [
@@ -745,7 +620,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootStyles"]
         },
         "circular": {
           "tokens": [
@@ -754,7 +630,8 @@
               "token": "tokens.borderRadiusCircular",
               "path": ["borderRadius"]
             }
-          ]
+          ],
+          "assignedVariables": ["rootStyles"]
         },
         "square": {
           "tokens": [
@@ -763,7 +640,8 @@
               "token": "tokens.borderRadiusNone",
               "path": ["borderRadius"]
             }
-          ]
+          ],
+          "assignedVariables": ["rootStyles"]
         },
         "small": {
           "tokens": [
@@ -787,7 +665,8 @@
               "token": "tokens.lineHeightBase200",
               "path": ["lineHeight"]
             }
-          ]
+          ],
+          "assignedVariables": ["rootStyles"]
         },
         "large": {
           "tokens": [
@@ -811,7 +690,8 @@
               "token": "tokens.lineHeightBase400",
               "path": ["lineHeight"]
             }
-          ]
+          ],
+          "assignedVariables": ["rootStyles"]
         }
       },
       "useRootDisabledStyles": {
@@ -876,7 +756,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootDisabledStyles"]
         },
         "outline": {
           "tokens": [
@@ -905,7 +786,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootDisabledStyles"]
         },
         "subtle": {
           "tokens": [
@@ -934,7 +816,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootDisabledStyles"]
         },
         "transparent": {
           "tokens": [
@@ -963,7 +846,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootDisabledStyles"]
         }
       },
       "useRootFocusStyles": {},
@@ -976,7 +860,8 @@
               "token": "tokens.spacingHorizontalXS",
               "path": ["[iconSpacingVar]"]
             }
-          ]
+          ],
+          "assignedVariables": ["iconStyles"]
         },
         "large": {
           "tokens": [
@@ -985,7 +870,8 @@
               "token": "tokens.spacingHorizontalSNudge",
               "path": ["[iconSpacingVar]"]
             }
-          ]
+          ],
+          "assignedVariables": ["iconStyles"]
         }
       }
     },
@@ -1013,6 +899,164 @@
           "isBase": true
         }
       }
+    }
+  },
+  "library/src/components/MenuButton/useMenuButtonStyles.styles.ts": {
+    "styles": {
+      "useRootExpandedStyles": {
+        "outline": {
+          "tokens": [
+            {
+              "property": "color",
+              "token": "tokens.colorNeutralForeground1Selected",
+              "path": ["color"]
+            }
+          ],
+          "assignedVariables": ["rootExpandedStyles"]
+        },
+        "primary": {
+          "tokens": [
+            {
+              "property": "backgroundColor",
+              "token": "tokens.colorBrandBackgroundSelected",
+              "path": ["backgroundColor"]
+            }
+          ],
+          "assignedVariables": ["rootExpandedStyles"]
+        },
+        "secondary": {
+          "tokens": [
+            {
+              "property": "backgroundColor",
+              "token": "tokens.colorNeutralBackground1Selected",
+              "path": ["backgroundColor"]
+            },
+            {
+              "property": "color",
+              "token": "tokens.colorNeutralForeground1Selected",
+              "path": ["color"]
+            }
+          ],
+          "assignedVariables": ["rootExpandedStyles"]
+        },
+        "subtle": {
+          "tokens": [
+            {
+              "property": "backgroundColor",
+              "token": "tokens.colorSubtleBackgroundSelected",
+              "path": ["backgroundColor"]
+            },
+            {
+              "property": "color",
+              "token": "tokens.colorNeutralForeground2Selected",
+              "path": ["color"]
+            }
+          ],
+          "assignedVariables": ["rootExpandedStyles"]
+        },
+        "transparent": {
+          "tokens": [
+            {
+              "property": "backgroundColor",
+              "token": "tokens.colorTransparentBackgroundSelected",
+              "path": ["backgroundColor"]
+            },
+            {
+              "property": "color",
+              "token": "tokens.colorNeutralForeground2BrandSelected",
+              "path": ["color"]
+            }
+          ],
+          "assignedVariables": ["rootExpandedStyles"]
+        }
+      },
+      "useIconExpandedStyles": {
+        "outline": {
+          "tokens": [
+            {
+              "property": "color",
+              "token": "tokens.colorNeutralForeground1Selected",
+              "path": ["color"]
+            }
+          ],
+          "assignedVariables": ["iconExpandedStyles"]
+        },
+        "secondary": {
+          "tokens": [
+            {
+              "property": "color",
+              "token": "tokens.colorNeutralForeground1Selected",
+              "path": ["color"]
+            }
+          ],
+          "assignedVariables": ["iconExpandedStyles"]
+        },
+        "subtle": {
+          "tokens": [
+            {
+              "property": "color",
+              "token": "tokens.colorNeutralForeground2BrandSelected",
+              "path": ["color"]
+            }
+          ],
+          "assignedVariables": ["iconExpandedStyles"]
+        },
+        "transparent": {
+          "tokens": [
+            {
+              "property": "color",
+              "token": "tokens.colorNeutralForeground2BrandSelected",
+              "path": ["color"]
+            }
+          ],
+          "assignedVariables": ["iconExpandedStyles"]
+        }
+      },
+      "useMenuIconStyles": {
+        "small": {
+          "tokens": [
+            {
+              "property": "lineHeight",
+              "token": "tokens.lineHeightBase200",
+              "path": ["lineHeight"]
+            }
+          ],
+          "assignedVariables": ["menuIconStyles"]
+        },
+        "medium": {
+          "tokens": [
+            {
+              "property": "lineHeight",
+              "token": "tokens.lineHeightBase200",
+              "path": ["lineHeight"]
+            }
+          ],
+          "assignedVariables": ["menuIconStyles"]
+        },
+        "large": {
+          "tokens": [
+            {
+              "property": "lineHeight",
+              "token": "tokens.lineHeightBase400",
+              "path": ["lineHeight"]
+            }
+          ],
+          "assignedVariables": ["menuIconStyles"]
+        },
+        "notIconOnly": {
+          "tokens": [
+            {
+              "property": "marginLeft",
+              "token": "tokens.spacingHorizontalXS",
+              "path": ["marginLeft"]
+            }
+          ],
+          "assignedVariables": ["menuIconStyles"]
+        }
+      }
+    },
+    "metadata": {
+      "styleConditions": {}
     }
   },
   "library/src/components/SplitButton/useSplitButtonStyles.styles.ts": {
@@ -1049,7 +1093,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootStyles"]
         },
         "subtle": {
           "tokens": [],
@@ -1081,7 +1126,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootStyles"]
         },
         "transparent": {
           "tokens": [],
@@ -1113,7 +1159,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootStyles"]
         },
         "disabled": {
           "tokens": [],
@@ -1145,7 +1192,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootStyles"]
         }
       }
     },
@@ -1198,7 +1246,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootCheckedStyles"]
         },
         "outline": {
           "tokens": [
@@ -1227,7 +1276,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootCheckedStyles"]
         },
         "primary": {
           "tokens": [
@@ -1271,7 +1321,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootCheckedStyles"]
         },
         "subtle": {
           "tokens": [
@@ -1315,7 +1366,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootCheckedStyles"]
         },
         "transparent": {
           "tokens": [
@@ -1359,7 +1411,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootCheckedStyles"]
         }
       },
       "useRootDisabledStyles": {
@@ -1405,7 +1458,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootDisabledStyles"]
         },
         "subtle": {
           "tokens": [
@@ -1434,7 +1488,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootDisabledStyles"]
         },
         "transparent": {
           "tokens": [
@@ -1463,7 +1518,8 @@
                 }
               ]
             }
-          }
+          },
+          "assignedVariables": ["rootDisabledStyles"]
         }
       },
       "useIconCheckedStyles": {
@@ -1474,7 +1530,8 @@
               "token": "tokens.colorNeutralForeground2BrandSelected",
               "path": ["color"]
             }
-          ]
+          ],
+          "assignedVariables": ["iconCheckedStyles"]
         }
       },
       "usePrimaryHighContrastStyles": {}
