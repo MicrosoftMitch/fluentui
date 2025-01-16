@@ -5,7 +5,7 @@
         "focusIndicator": {
           "tokens": [],
           "nested": {
-            "&[data-fui-focus-visible]": {
+            ":focus": {
               "tokens": [
                 {
                   "property": "textDecorationColor",

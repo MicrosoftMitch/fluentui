@@ -73,8 +73,8 @@ function processStyleProperty(prop: PropertyAssignment, isResetStyles?: Boolean)
         }
       });
     } else if (Node.isCallExpression(node) && node.getExpression().getText() === 'createCustomFocusIndicatorStyle') {
-      const focus = `&[data-fui-focus-visible]`;
-      const focusWithin = `&[data-fui-focus-within]:focus-within`;
+      const focus = `:focus`;
+      const focusWithin = `:focus-within`;
       let nestedModifier = focus;
 
       const passedTokens = node.getArguments()[0];
@@ -86,9 +86,9 @@ function processStyleProperty(prop: PropertyAssignment, isResetStyles?: Boolean)
             const optionName = property.getName();
             if (optionName === 'selector') {
               const selectorType = property.getInitializer()?.getText();
-              if (selectorType === "'focus'") {
+              if (selectorType === 'focus') {
                 nestedModifier = focus;
-              } else if (selectorType === "'focus-within'") {
+              } else if (selectorType === 'focus-within') {
                 nestedModifier = focusWithin;
               }
             }
