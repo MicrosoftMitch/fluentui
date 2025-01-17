@@ -45,6 +45,16 @@ describe('Token Analyzer', () => {
       }),
     );
 
+    // Verify focus function styles
+    expect(styles.useStyles.focusIndicator.tokens).toEqual([]);
+    const focusStyle = styles.useStyles.focusIndicator.nested?.[':focus'];
+    console.log('styles.useStyles.focusIndicator.nested:', JSON.stringify(styles.useStyles.focusIndicator, null, 2));
+    expect(focusStyle?.tokens[0]).toEqual({
+      path: [],
+      property: 'textDecorationColor',
+      token: 'tokens.colorStrokeFocus2',
+    });
+
     // Verify metadata for conditional styles
     expect(metadata.styleConditions['styles.large']).toEqual({
       conditions: ["size === 'large'"],
